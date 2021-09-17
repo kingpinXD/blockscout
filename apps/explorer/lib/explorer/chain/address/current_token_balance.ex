@@ -43,7 +43,11 @@ defmodule Explorer.Chain.Address.CurrentTokenBalance do
     # A transient field for deriving token holder count deltas during address_current_token_balances upserts
     field(:old_value, :decimal)
 
-    belongs_to(:address, Address, foreign_key: :address_hash, references: :hash, type: Hash.Address)
+    belongs_to(:address, Address,
+      foreign_key: :address_hash,
+      references: :hash,
+      type: Hash.Address
+    )
 
     belongs_to(
       :token,
@@ -69,7 +73,9 @@ defmodule Explorer.Chain.Address.CurrentTokenBalance do
     |> foreign_key_constraint(:token_contract_address_hash)
   end
 
-  {:ok, burn_address_hash} = Chain.string_to_address_hash("0x0000000000000000000000000000000000000000")
+  {:ok, burn_address_hash} =
+    Chain.string_to_address_hash("0x0000000000000000000000000000000000000000")
+
   @burn_address_hash burn_address_hash
 
   @doc """

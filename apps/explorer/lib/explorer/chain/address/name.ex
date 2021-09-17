@@ -29,7 +29,12 @@ defmodule Explorer.Chain.Address.Name do
     field(:name, :string)
     field(:primary, :boolean)
     field(:metadata, :map)
-    belongs_to(:address, Address, foreign_key: :address_hash, references: :hash, type: Hash.Address)
+
+    belongs_to(:address, Address,
+      foreign_key: :address_hash,
+      references: :hash,
+      type: Hash.Address
+    )
 
     timestamps()
   end

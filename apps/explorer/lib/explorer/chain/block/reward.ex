@@ -140,7 +140,9 @@ defmodule Explorer.Chain.Block.Reward do
 
   defp is_validator(mining_key) do
     validators_contract_address =
-      Application.get_env(:explorer, Explorer.Chain.Block.Reward, %{})[:validators_contract_address]
+      Application.get_env(:explorer, Explorer.Chain.Block.Reward, %{})[
+        :validators_contract_address
+      ]
 
     if validators_contract_address do
       # facd743b=keccak256(isValidator(address))
@@ -157,7 +159,9 @@ defmodule Explorer.Chain.Block.Reward do
 
     if is_validator do
       keys_manager_contract_address =
-        Application.get_env(:explorer, Explorer.Chain.Block.Reward, %{})[:keys_manager_contract_address]
+        Application.get_env(:explorer, Explorer.Chain.Block.Reward, %{})[
+          :keys_manager_contract_address
+        ]
 
       if keys_manager_contract_address do
         payout_key =
@@ -166,7 +170,11 @@ defmodule Explorer.Chain.Block.Reward do
             get_payout_by_mining_params = %{"7cded930" => [mining_key.bytes]}
 
             payout_key_hash =
-              call_contract(keys_manager_contract_address, @get_payout_by_mining_abi, get_payout_by_mining_params)
+              call_contract(
+                keys_manager_contract_address,
+                @get_payout_by_mining_abi,
+                get_payout_by_mining_params
+              )
 
             if payout_key_hash == @empty_address do
               mining_key
@@ -213,7 +221,12 @@ defmodule Explorer.Chain.Block.Reward do
     |> preload(:block)
   end
 
-  defp address_rewards_blocks_ranges_clause(query, min_block_number, max_block_number, paging_options) do
+  defp address_rewards_blocks_ranges_clause(
+         query,
+         min_block_number,
+         max_block_number,
+         paging_options
+       ) do
     if is_number(min_block_number) and max_block_number > 0 and min_block_number > 0 do
       cond do
         paging_options.page_number == 1 ->

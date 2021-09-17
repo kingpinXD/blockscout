@@ -85,7 +85,8 @@ defmodule Explorer.Chain.Address.Token do
     where(
       query,
       [token],
-      token.type < ^type or (token.type == ^type and is_nil(token.name) and token.inserted_at < ^inserted_at)
+      token.type < ^type or
+        (token.type == ^type and is_nil(token.name) and token.inserted_at < ^inserted_at)
     )
   end
 
@@ -96,8 +97,10 @@ defmodule Explorer.Chain.Address.Token do
       query,
       [token],
       token.type < ^type or
-        (token.type == ^type and (fragment("LOWER(?)", token.name) > ^upper_name or is_nil(token.name))) or
-        (token.type == ^type and fragment("LOWER(?)", token.name) == ^upper_name and token.inserted_at < ^inserted_at)
+        (token.type == ^type and
+           (fragment("LOWER(?)", token.name) > ^upper_name or is_nil(token.name))) or
+        (token.type == ^type and fragment("LOWER(?)", token.name) == ^upper_name and
+           token.inserted_at < ^inserted_at)
     )
   end
 end

@@ -82,7 +82,9 @@ defmodule Explorer.Chain.Block.Range do
     integer = "\\d*"
     # Upper boundary should be either `]` or `)`
     upper_boundary_values = "[\\]\\)]"
-    range_regex = ~r"(#{lower_boundary_values})(#{integer}),(#{integer})(#{upper_boundary_values})"
+
+    range_regex =
+      ~r"(#{lower_boundary_values})(#{integer}),(#{integer})(#{upper_boundary_values})"
 
     case Regex.run(range_regex, range_string, capture: :all_but_first) do
       [lower_boundary, lower, upper, upper_boundary] ->

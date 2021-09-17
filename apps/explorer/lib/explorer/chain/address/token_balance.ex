@@ -40,7 +40,11 @@ defmodule Explorer.Chain.Address.TokenBalance do
     field(:block_number, :integer)
     field(:value_fetched_at, :utc_datetime_usec)
 
-    belongs_to(:address, Address, foreign_key: :address_hash, references: :hash, type: Hash.Address)
+    belongs_to(:address, Address,
+      foreign_key: :address_hash,
+      references: :hash,
+      type: Hash.Address
+    )
 
     belongs_to(
       :token,
@@ -67,7 +71,9 @@ defmodule Explorer.Chain.Address.TokenBalance do
     |> unique_constraint(:block_number, name: :token_balances_address_hash_block_number_index)
   end
 
-  {:ok, burn_address_hash} = Chain.string_to_address_hash("0x0000000000000000000000000000000000000000")
+  {:ok, burn_address_hash} =
+    Chain.string_to_address_hash("0x0000000000000000000000000000000000000000")
+
   @burn_address_hash burn_address_hash
 
   @doc """
@@ -83,7 +89,8 @@ defmodule Explorer.Chain.Address.TokenBalance do
       join: t in Token,
       on: tb.token_contract_address_hash == t.contract_address_hash,
       where: is_nil(tb.value_fetched_at) or is_nil(tb.value),
-      where: (tb.address_hash != ^@burn_address_hash and t.type != "ERC-721") or t.type == "ERC-20"
+      where:
+        (tb.address_hash != ^@burn_address_hash and t.type != "ERC-721") or t.type == "ERC-20"
     )
   end
 end

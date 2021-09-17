@@ -37,7 +37,11 @@ defmodule Explorer.Chain.Address.CoinBalanceDaily do
 
     timestamps()
 
-    belongs_to(:address, Address, foreign_key: :address_hash, references: :hash, type: Hash.Address)
+    belongs_to(:address, Address,
+      foreign_key: :address_hash,
+      references: :hash,
+      type: Hash.Address
+    )
   end
 
   @doc """
@@ -47,7 +51,9 @@ defmodule Explorer.Chain.Address.CoinBalanceDaily do
   """
   def balances_by_day(address_hash) do
     {days_to_consider, _} =
-      Application.get_env(:block_scout_web, BlockScoutWeb.Chain.Address.CoinBalance)[:coin_balance_history_days]
+      Application.get_env(:block_scout_web, BlockScoutWeb.Chain.Address.CoinBalance)[
+        :coin_balance_history_days
+      ]
       |> Integer.parse()
 
     CoinBalanceDaily
@@ -60,7 +66,11 @@ defmodule Explorer.Chain.Address.CoinBalanceDaily do
     query
     |> where(
       [cbd],
-      cbd.day >= fragment("date_trunc('day', now() - CAST(? AS INTERVAL))", ^%Postgrex.Interval{days: days_to_consider})
+      cbd.day >=
+        fragment(
+          "date_trunc('day', now() - CAST(? AS INTERVAL))",
+          ^%Postgrex.Interval{days: days_to_consider}
+        )
     )
   end
 

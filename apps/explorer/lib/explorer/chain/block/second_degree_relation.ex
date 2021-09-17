@@ -52,8 +52,19 @@ defmodule Explorer.Chain.Block.SecondDegreeRelation do
     field(:uncle_fetched_at, :utc_datetime_usec)
     field(:index, :integer)
 
-    belongs_to(:nephew, Block, foreign_key: :nephew_hash, primary_key: true, references: :hash, type: Hash.Full)
-    belongs_to(:uncle, Block, foreign_key: :uncle_hash, primary_key: true, references: :hash, type: Hash.Full)
+    belongs_to(:nephew, Block,
+      foreign_key: :nephew_hash,
+      primary_key: true,
+      references: :hash,
+      type: Hash.Full
+    )
+
+    belongs_to(:uncle, Block,
+      foreign_key: :uncle_hash,
+      primary_key: true,
+      references: :hash,
+      type: Hash.Full
+    )
   end
 
   def changeset(%__MODULE__{} = uncle, params) do

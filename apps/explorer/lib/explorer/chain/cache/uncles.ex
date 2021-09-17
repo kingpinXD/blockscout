@@ -25,7 +25,9 @@ defmodule Explorer.Chain.Cache.Uncles do
 
   def element_to_id(%Block{number: number}), do: number
 
-  def update_from_second_degree_relations(second_degree_relations) when is_nil(second_degree_relations), do: :ok
+  def update_from_second_degree_relations(second_degree_relations)
+      when is_nil(second_degree_relations),
+      do: :ok
 
   def update_from_second_degree_relations(second_degree_relations) do
     uncle_hashes =

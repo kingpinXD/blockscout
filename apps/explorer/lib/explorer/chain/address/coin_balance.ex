@@ -48,7 +48,11 @@ defmodule Explorer.Chain.Address.CoinBalance do
 
     timestamps()
 
-    belongs_to(:address, Address, foreign_key: :address_hash, references: :hash, type: Hash.Address)
+    belongs_to(:address, Address,
+      foreign_key: :address_hash,
+      references: :hash,
+      type: Hash.Address
+    )
   end
 
   @doc """
@@ -71,7 +75,9 @@ defmodule Explorer.Chain.Address.CoinBalance do
       cb in subquery(coin_balance_subquery),
       limit: ^1,
       order_by: [desc: :block_number],
-      select_merge: %{delta: fragment("value - coalesce(lag(value, 1) over (order by block_number), 0)")}
+      select_merge: %{
+        delta: fragment("value - coalesce(lag(value, 1) over (order by block_number), 0)")
+      }
     )
   end
 
@@ -92,7 +98,10 @@ defmodule Explorer.Chain.Address.CoinBalance do
         where: not is_nil(cb.value),
         order_by: [desc: :block_number],
         select_merge: %{
-          delta: fragment("sa0.value - coalesce(lead(sa0.value, 1) over (order by sa0.block_number desc), 0)"),
+          delta:
+            fragment(
+              "sa0.value - coalesce(lead(sa0.value, 1) over (order by sa0.block_number desc), 0)"
+            ),
           transaction_hash: tx.hash,
           transaction_value: tx.value
         }
@@ -112,7 +121,10 @@ defmodule Explorer.Chain.Address.CoinBalance do
         where: not is_nil(cb.value),
         order_by: [desc: :block_number],
         select_merge: %{
-          delta: fragment("sa0.value - coalesce(lead(sa0.value, 1) over (order by sa0.block_number desc), 0)")
+          delta:
+            fragment(
+              "sa0.value - coalesce(lead(sa0.value, 1) over (order by sa0.block_number desc), 0)"
+            )
         }
       )
 
@@ -132,7 +144,9 @@ defmodule Explorer.Chain.Address.CoinBalance do
   """
   def balances_by_day(address_hash, block_timestamp \\ nil) do
     {days_to_consider, _} =
-      Application.get_env(:block_scout_web, BlockScoutWeb.Chain.Address.CoinBalance)[:coin_balance_history_days]
+      Application.get_env(:block_scout_web, BlockScoutWeb.Chain.Address.CoinBalance)[
+        :coin_balance_history_days
+      ]
       |> Integer.parse()
 
     CoinBalance
@@ -141,7 +155,10 @@ defmodule Explorer.Chain.Address.CoinBalance do
     |> limit_time_interval(days_to_consider, block_timestamp)
     |> group_by([cb, b], fragment("date_trunc('day', ?)", b.timestamp))
     |> order_by([cb, b], fragment("date_trunc('day', ?)", b.timestamp))
-    |> select([cb, b], %{date: type(fragment("date_trunc('day', ?)", b.timestamp), :date), value: max(cb.value)})
+    |> select([cb, b], %{
+      date: type(fragment("date_trunc('day', ?)", b.timestamp), :date),
+      value: max(cb.value)
+    })
   end
 
   def limit_time_interval(query, days_to_consider, nil) do
@@ -149,7 +166,10 @@ defmodule Explorer.Chain.Address.CoinBalance do
     |> where(
       [cb, b],
       b.timestamp >=
-        fragment("date_trunc('day', now() - CAST(? AS INTERVAL))", ^%Postgrex.Interval{days: days_to_consider})
+        fragment(
+          "date_trunc('day', now() - CAST(? AS INTERVAL))",
+          ^%Postgrex.Interval{days: days_to_consider}
+        )
     )
   end
 
@@ -187,6 +207,8 @@ defmodule Explorer.Chain.Address.CoinBalance do
     |> cast(params, @allowed_fields)
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:address_hash)
-    |> unique_constraint(:block_number, name: :address_coin_balances_address_hash_block_number_index)
+    |> unique_constraint(:block_number,
+      name: :address_coin_balances_address_hash_block_number_index
+    )
   end
 end
